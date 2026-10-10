@@ -1,0 +1,359 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Student
+{
+    int rollNo;
+    char name[50];
+    float marks;
+    struct Student *next;
+};
+
+struct Student *head = NULL;
+
+/* 1. Add Student - Insertion */
+void addStudent(void)
+{
+    struct Student *newNode, *temp;
+
+    newNode = malloc(sizeof(struct Student));
+
+    if (newNode == NULL)
+    {
+        printf("\nMemory allocation failed!\n");
+        return;
+    }
+
+    printf("\nEnter Roll Number: ");
+    scanf("%d", &newNode->rollNo);
+
+    /* Check duplicate roll number */
+    temp = head;
+    while (temp != NULL)
+    {
+        if (temp->rollNo == newNode->rollNo)
+        {
+            printf("\nRoll number already exists!\n");
+            free(newNode);
+            return;
+        }
+        temp = temp->next;
+    }
+
+    printf("Enter Student Name: ");
+    scanf(" %49[^\n]", newNode->name);
+
+    printf("Enter Marks (0-100): ");
+    scanf("%f", &newNode->marks);
+
+    if (newNode->marks < 0 || newNode->marks > 100)
+    {
+        printf("\nInvalid marks!\n");
+        free(newNode);
+        return;
+    }
+
+    newNode->next = NULL;
+
+    if (head == NULL)
+    {
+        head = newNode;
+    }
+    else
+    {
+        temp = head;
+
+        while (temp->next != NULL)
+            temp = temp->next;
+
+        temp->next = newNode;
+    }
+
+    printf("\nStudent added successfully!\n");
+}
+
+/* 2. Display Students - Traversal */
+void displayStudents(void)
+{
+    struct Student *temp = head;
+
+    if (temp == NULL)
+    {
+        printf("\nNo student records found.\n");
+        return;
+    }
+
+    printf("\n================ STUDENT RECORDS ================\n");
+    printf("%-10s %-25s %-10s %-10s\n",
+           "Roll No", "Name", "Marks", "Status");
+    printf("--------------------------------------------------\n");
+
+    while (temp != NULL)
+    {
+        printf("%-10d %-25s %-10.2f %-10s\n",
+               temp->rollNo,
+               temp->name,
+               temp->marks,
+               temp->marks >= 40 ? "PASS" : "FAIL");
+
+        temp = temp->next;
+    }
+
+    printf("==================================================\n");
+}
+
+/* 3. Search Student - Linear Search */
+void searchStudent(void)
+{
+    struct Student *temp = head;
+    int roll;
+
+    if (head == NULL)
+    {
+        printf("\nNo student records found.\n");
+        return;
+    }
+
+    printf("\nEnter Roll Number to search: ");
+    scanf("%d", &roll);
+
+    while (temp != NULL)
+    {
+        if (temp->rollNo == roll)
+        {
+            printf("\n--------------- STUDENT FOUND ---------------\n");
+            printf("Roll Number : %d\n", temp->rollNo);
+            printf("Name        : %s\n", temp->name);
+            printf("Marks       : %.2f\n", temp->marks);
+            printf("Status      : %s\n",
+                   temp->marks >= 40 ? "PASS" : "FAIL");
+            printf("---------------------------------------------\n");
+            return;
+        }
+
+        temp = temp->next;
+    }
+
+    printf("\nStudent not found.\n");
+}
+
+/* 4. Edit Student Data - Data Modification */
+void editStudent(void)
+{
+    struct Student *temp = head;
+    int roll;
+    float marks;
+
+    if (head == NULL)
+    {
+        printf("\nNo student records found.\n");
+        return;
+    }
+
+    printf("\nEnter Roll Number to edit: ");
+    scanf("%d", &roll);
+
+    while (temp != NULL)
+    {
+        if (temp->rollNo == roll)
+        {
+            printf("\nCurrent Name  : %s\n", temp->name);
+            printf("Current Marks : %.2f\n", temp->marks);
+
+            printf("\nEnter New Name: ");
+            scanf(" %49[^\n]", temp->name);
+
+            printf("Enter New Marks (0-100): ");
+            scanf("%f", &marks);
+
+            if (marks < 0 || marks > 100)
+            {
+                printf("\nInvalid marks! Data not updated.\n");
+                return;
+            }
+
+            temp->marks = marks;
+
+            printf("\nStudent data updated successfully!\n");
+            return;
+        }
+
+        temp = temp->next;
+    }
+
+    printf("\nStudent not found.\n");
+}
+
+/* 5. Remove Student - Deletion */
+void removeStudent(void)
+{
+    struct Student *temp = head;
+    struct Student *prev = NULL;
+    int roll;
+
+    if (head == NULL)
+    {
+        printf("\nNo student records found.\n");
+        return;
+    }
+
+    printf("\nEnter Roll Number to remove: ");
+    scanf("%d", &roll);
+
+    while (temp != NULL && temp->rollNo != roll)
+    {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    if (temp == NULL)
+    {
+        printf("\nStudent not found.\n");
+        return;
+    }
+
+    if (prev == NULL)
+        head = temp->next;
+    else
+        prev->next = temp->next;
+
+    free(temp);
+
+    printf("\nStudent removed successfully!\n");
+}
+
+/* 6. Count Students - Traversal */
+void countStudents(void)
+{
+    struct Student *temp = head;
+    int count = 0;
+
+    while (temp != NULL)
+    {
+        count++;
+        temp = temp->next;
+    }
+
+    printf("\nTotal Number of Students: %d\n", count);
+}
+
+/* 7. Performance Statistics - Traversal + Calculation */
+void performanceStatistics(void)
+{
+    struct Student *temp = head;
+    int total = 0;
+    int pass = 0;
+    int fail = 0;
+    float sum = 0.0f;
+
+    if (head == NULL)
+    {
+        printf("\nNo student records found.\n");
+        return;
+    }
+
+    while (temp != NULL)
+    {
+        total++;
+        sum += temp->marks;
+
+        if (temp->marks >= 40)
+            pass++;
+        else
+            fail++;
+
+        temp = temp->next;
+    }
+
+    printf("\n=========== PERFORMANCE STATISTICS ===========\n");
+    printf("Total Students  : %d\n", total);
+    printf("Average Marks   : %.2f\n", sum / total);
+    printf("Students Passed : %d\n", pass);
+    printf("Students Failed : %d\n", fail);
+    printf("Pass Percentage : %.2f%%\n",
+           pass * 100.0f / total);
+    printf("Fail Percentage : %.2f%%\n",
+           fail * 100.0f / total);
+    printf("===============================================\n");
+}
+
+/* 8. Exit - Memory Deallocation */
+void freeList(void)
+{
+    struct Student *temp;
+
+    while (head != NULL)
+    {
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+/* Main Function */
+int main(void)
+{
+    int choice;
+
+    do
+    {
+        printf("\n\n==============================================\n");
+        printf("     STUDENT RECORD MANAGEMENT SYSTEM\n");
+        printf("==============================================\n");
+        printf("1. Add Student\n");
+        printf("2. Display Students\n");
+        printf("3. Search Student\n");
+        printf("4. Edit Student Data\n");
+        printf("5. Remove Student\n");
+        printf("6. Count Students\n");
+        printf("7. Performance Statistics\n");
+        printf("8. Exit\n");
+        printf("==============================================\n");
+
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice)
+        {
+            case 1:
+                addStudent();
+                break;
+
+            case 2:
+                displayStudents();
+                break;
+
+            case 3:
+                searchStudent();
+                break;
+
+            case 4:
+                editStudent();
+                break;
+
+            case 5:
+                removeStudent();
+                break;
+
+            case 6:
+                countStudents();
+                break;
+
+            case 7:
+                performanceStatistics();
+                break;
+
+            case 8:
+                freeList();
+                printf("\nAll memory released successfully.\n");
+                printf("Thank you for using the system!\n");
+                break;
+
+            default:
+                printf("\nInvalid choice! Enter 1 to 8.\n");
+        }
+
+    } while (choice != 8);
+
+    return 0;
+}
