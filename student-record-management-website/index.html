@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#f5f7ff" />
+  <meta name="description" content="A student record management dashboard demonstrating linked-list operations with student search, editing, deletion and performance statistics." />
+  <title>Student Record Manager</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Main navigation">
+      <a class="brand" href="#overview" aria-label="Student Record Manager home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-copy"><strong>Campus<span>List</span></strong><small>STUDENT RECORDS</small></span>
+      </a>
+
+      <div class="nav-label">WORKSPACE</div>
+      <nav class="main-nav">
+        <button class="nav-item active" data-view="overview" type="button"><span class="nav-icon" aria-hidden="true">◫</span><span>Overview</span></button>
+        <button class="nav-item" data-view="students" type="button"><span class="nav-icon" aria-hidden="true">☷</span><span>Student directory</span><span class="nav-count" id="navStudentCount">0</span></button>
+        <button class="nav-item" data-view="performance" type="button"><span class="nav-icon" aria-hidden="true">▥</span><span>Performance</span></button>
+      </nav>
+
+      <div class="sidebar-bottom">
+        <div class="linked-list-card">
+          <div class="linked-list-icon" aria-hidden="true"><span>●</span><i></i><span>●</span><i></i><span>●</span></div>
+          <strong>Powered by linked lists</strong>
+          <p>Records connect node by node and grow when you need them.</p>
+        </div>
+        <button class="nav-item exit-item" id="exitButton" type="button"><span class="nav-icon" aria-hidden="true">↗</span><span>Exit application</span></button>
+        <div class="sidebar-foot">DSA MINI PROJECT <span>•</span> C / LINKED LISTS</div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <div class="breadcrumb"><span>Workspace</span><span class="crumb-slash">/</span><strong id="breadcrumbCurrent">Overview</strong></div>
+        <div class="topbar-right">
+          <span class="saved-status"><span class="status-dot"></span><span id="saveStatus">Saved on this device</span></span>
+          <button class="avatar" type="button" aria-label="Student Record Manager">SR</button>
+        </div>
+      </header>
+
+      <div class="page-content">
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> STUDENT ADMINISTRATION</div>
+            <h1 id="pageTitle">Student records, <span>made simple.</span></h1>
+            <p id="pageSubtitle">A clear view of student information and class performance.</p>
+          </div>
+          <button class="button button-primary" id="addStudentButton" type="button"><span class="button-plus">＋</span> Add student</button>
+        </section>
+
+        <section class="view-panel active" id="overviewView" data-view-panel="overview">
+          <div class="stats-grid">
+            <article class="stat-card stat-primary">
+              <div class="stat-top"><span class="stat-label">TOTAL STUDENTS</span><span class="stat-icon icon-blue" aria-hidden="true">♙</span></div>
+              <div class="stat-value" id="totalStudents">0</div>
+              <div class="stat-bottom"><span class="stat-note">Active records in your list</span></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-label">CLASS AVERAGE</span><span class="stat-icon icon-purple" aria-hidden="true">∑</span></div>
+              <div class="stat-value"><span id="averageMarks">0.00</span><small>/ 100</small></div>
+              <div class="stat-bottom"><span class="stat-note">Average marks of all students</span></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-label">PASS RATE</span><span class="stat-icon icon-green" aria-hidden="true">✓</span></div>
+              <div class="stat-value"><span id="passRate">0</span><small>%</small></div>
+              <div class="stat-bottom"><span class="stat-note"><span id="passCount">0</span> students passed</span></div>
+            </article>
+            <article class="stat-card">
+              <div class="stat-top"><span class="stat-label">NEEDS SUPPORT</span><span class="stat-icon icon-orange" aria-hidden="true">!</span></div>
+              <div class="stat-value" id="failCount">0</div>
+              <div class="stat-bottom"><span class="stat-note">Below 40 marks</span></div>
+            </article>
+          </div>
+
+          <section class="content-card directory-card">
+            <div class="card-heading">
+              <div><h2>Student directory</h2><p>Your latest student records, connected through a linked list.</p></div>
+              <button class="button button-quiet" data-open-view="students" type="button">View all students <span aria-hidden="true">→</span></button>
+            </div>
+            <div id="overviewTableWrap" class="table-wrap"></div>
+            <div class="empty-state" id="overviewEmpty" hidden>
+              <div class="empty-illustration" aria-hidden="true"><span>●</span><i></i><span>●</span><i></i><span>●</span></div>
+              <h3>Your student list starts here</h3>
+              <p>Add your first student to begin managing records and tracking class performance.</p>
+              <button class="button button-primary" data-open-add type="button">＋ Add first student</button>
+              <button class="text-button" id="loadDemoButton" type="button">Or load sample records</button>
+            </div>
+          </section>
+
+          <div class="bottom-grid">
+            <section class="content-card performance-card">
+              <div class="card-heading compact"><div><h2>Class performance</h2><p>Pass mark: 40 out of 100</p></div><span class="mini-tag">LIVE SUMMARY</span></div>
+              <div class="performance-summary">
+                <div class="donut" id="passDonut" style="--pass-angle: 0deg"><div class="donut-inner"><strong id="donutRate">0%</strong><span>pass rate</span></div></div>
+                <div class="performance-legend">
+                  <div><span class="legend-dot legend-pass"></span><span>Passed</span><strong id="legendPass">0</strong></div>
+                  <div><span class="legend-dot legend-fail"></span><span>Failed</span><strong id="legendFail">0</strong></div>
+                  <div><span class="legend-dot legend-empty"></span><span>No records</span><strong id="legendTotal">0</strong></div>
+                </div>
+              </div>
+              <button class="button button-outline full-width" data-open-view="performance" type="button">View performance report <span aria-hidden="true">→</span></button>
+            </section>
+            <section class="content-card quick-actions-card">
+              <div class="card-heading compact"><div><h2>Quick actions</h2><p>Get straight to the task you need.</p></div></div>
+              <button class="quick-action" data-open-add type="button"><span class="quick-action-icon blue-bg">＋</span><span><strong>Add a student</strong><small>Create a new student record</small></span><span class="quick-arrow">→</span></button>
+              <button class="quick-action" data-open-view="students" type="button"><span class="quick-action-icon purple-bg">⌕</span><span><strong>Find a student</strong><small>Search by name or roll number</small></span><span class="quick-arrow">→</span></button>
+              <button class="quick-action" id="exportFromOverview" type="button"><span class="quick-action-icon green-bg">⇩</span><span><strong>Export records</strong><small>Download your list as a CSV file</small></span><span class="quick-arrow">→</span></button>
+            </section>
+          </div>
+        </section>
+
+        <section class="view-panel" id="studentsView" data-view-panel="students">
+          <section class="content-card full-directory-card">
+            <div class="card-heading directory-heading">
+              <div><h2>All students <span class="inline-count" id="directoryCount">0</span></h2><p>Search, edit, or remove records in your linked list.</p></div>
+              <button class="button button-outline" id="exportButton" type="button"><span aria-hidden="true">⇩</span> Export CSV</button>
+            </div>
+            <div class="table-toolbar">
+              <label class="search-box"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search by name or roll number..." autocomplete="off" /><kbd>↵</kbd></label>
+              <div class="toolbar-filters">
+                <label class="sr-only" for="statusFilter">Filter by performance</label>
+                <select id="statusFilter"><option value="all">All students</option><option value="pass">Passed</option><option value="fail">Failed</option></select>
+                <label class="sr-only" for="sortSelect">Sort student records</label>
+                <select id="sortSelect"><option value="recent">Recently added</option><option value="name">Name A–Z</option><option value="roll">Roll number</option><option value="marks-high">Highest marks</option><option value="marks-low">Lowest marks</option></select>
+              </div>
+            </div>
+            <div id="studentsTableWrap" class="table-wrap"></div>
+            <div class="empty-state small-empty" id="studentsEmpty" hidden>
+              <div class="empty-symbol" aria-hidden="true">⌕</div>
+              <h3 id="studentsEmptyTitle">No student records yet</h3>
+              <p id="studentsEmptyText">Add a student to see their details here.</p>
+              <button class="button button-primary" data-open-add type="button">＋ Add student</button>
+            </div>
+            <div class="table-footer"><span id="showingCount">Showing 0 students</span><span>Pass criteria: <strong>40+ marks</strong></span></div>
+          </section>
+        </section>
+
+        <section class="view-panel" id="performanceView" data-view-panel="performance">
+          <div class="report-intro"><div class="report-icon" aria-hidden="true">▥</div><div><h2>Performance report</h2><p>Academic summary calculated by traversing each node in the student linked list.</p></div></div>
+          <div class="stats-grid report-stats">
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">TOTAL STUDENTS</span><span class="stat-icon icon-blue">♙</span></div><div class="stat-value" id="reportTotal">0</div><div class="stat-bottom"><span class="stat-note">Records included in this report</span></div></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">AVERAGE MARKS</span><span class="stat-icon icon-purple">∑</span></div><div class="stat-value"><span id="reportAverage">0.00</span><small>/ 100</small></div><div class="stat-bottom"><span class="stat-note">Sum of marks ÷ total students</span></div></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">PASSED</span><span class="stat-icon icon-green">✓</span></div><div class="stat-value" id="reportPass">0</div><div class="stat-bottom"><span class="stat-note" id="reportPassPercentage">0.00% of students</span></div></article>
+            <article class="stat-card"><div class="stat-top"><span class="stat-label">FAILED</span><span class="stat-icon icon-orange">!</span></div><div class="stat-value" id="reportFail">0</div><div class="stat-bottom"><span class="stat-note" id="reportFailPercentage">0.00% of students</span></div></article>
+          </div>
+          <div class="report-grid">
+            <section class="content-card report-breakdown">
+              <div class="card-heading compact"><div><h2>Pass / fail breakdown</h2><p>Students are considered passed at 40 marks or above.</p></div></div>
+              <div class="breakdown-row"><div class="breakdown-label"><span><i class="legend-dot legend-pass"></i> Passed students</span><strong id="breakdownPassText">0 · 0.00%</strong></div><div class="progress-track"><div id="passProgress" class="progress-fill progress-green" style="width:0%"></div></div></div>
+              <div class="breakdown-row"><div class="breakdown-label"><span><i class="legend-dot legend-fail"></i> Failed students</span><strong id="breakdownFailText">0 · 0.00%</strong></div><div class="progress-track"><div id="failProgress" class="progress-fill progress-orange" style="width:0%"></div></div></div>
+              <div class="report-note"><span aria-hidden="true">i</span><p>Statistics update automatically whenever a student is added, edited, or removed.</p></div>
+            </section>
+            <section class="content-card marks-insight">
+              <div class="card-heading compact"><div><h2>Marks insight</h2><p>Highest and lowest marks in the current list.</p></div></div>
+              <div class="insight-item"><span class="insight-label">HIGHEST MARKS</span><strong id="highestMarks">—</strong><span id="highestStudent" class="insight-name">No records available</span></div>
+              <div class="insight-divider"></div>
+              <div class="insight-item"><span class="insight-label">LOWEST MARKS</span><strong id="lowestMarks">—</strong><span id="lowestStudent" class="insight-name">No records available</span></div>
+              <button class="button button-outline full-width" data-open-view="students" type="button">Browse student directory <span aria-hidden="true">→</span></button>
+            </section>
+          </div>
+        </section>
+
+        <footer class="page-footer"><span>CampusList <span class="footer-separator">/</span> Student Record Management System</span><span>Built to demonstrate <strong>singly linked lists</strong></span></footer>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="studentModal" hidden>
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-heading"><div><div class="eyebrow"><span class="eyebrow-line"></span> STUDENT DETAILS</div><h2 id="modalTitle">Add a student</h2><p id="modalDescription">Enter the details below to create a new record.</p></div><button class="icon-button" id="closeModalButton" type="button" aria-label="Close dialog">×</button></div>
+      <form id="studentForm">
+        <div class="form-field"><label for="rollNo">Roll number <span>*</span></label><input id="rollNo" name="rollNo" type="number" min="1" step="1" placeholder="e.g. 101" required /><small>A unique roll number identifies each record.</small></div>
+        <div class="form-field"><label for="studentName">Student name <span>*</span></label><input id="studentName" name="studentName" type="text" maxlength="49" placeholder="Enter full name" required autocomplete="name" /></div>
+        <div class="form-field"><label for="studentMarks">Marks <span>*</span></label><div class="input-with-suffix"><input id="studentMarks" name="studentMarks" type="number" min="0" max="100" step="0.01" placeholder="0–100" required /><span>/ 100</span></div><small>Pass mark is 40. The status is calculated automatically.</small></div>
+        <div class="form-error" id="formError" role="alert" hidden></div>
+        <div class="modal-actions"><button class="button button-quiet" id="cancelModalButton" type="button">Cancel</button><button class="button button-primary" id="saveStudentButton" type="submit">Save student <span aria-hidden="true">→</span></button></div>
+      </form>
+    </section>
+  </div>
+
+  <div class="modal-backdrop" id="exitModal" hidden>
+    <section class="modal exit-modal" role="dialog" aria-modal="true" aria-labelledby="exitTitle">
+      <button class="icon-button modal-corner-close" id="closeExitButton" type="button" aria-label="Close dialog">×</button>
+      <div class="exit-illustration" aria-hidden="true">✓</div>
+      <h2 id="exitTitle">You're all set.</h2>
+      <p>Your student records are saved in this browser. You can close this tab when you're ready.</p>
+      <div class="local-data-note"><span aria-hidden="true">⌂</span><span><strong>Stored on this device</strong><small>Records are not uploaded to a server or shared online.</small></span></div>
+      <button class="button button-primary full-width" id="backToAppButton" type="button">Back to application</button>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"><span class="toast-check" aria-hidden="true">✓</span><span id="toastMessage">Changes saved</span></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
